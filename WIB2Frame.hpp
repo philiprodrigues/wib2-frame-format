@@ -21,15 +21,16 @@ public:
     // The definition of the format is in terms of 32-bit words
     typedef uint32_t word_t;
 
-    class Header
+    struct Header
     {
+        
         word_t crate : 8, frame_version : 4, slot : 3, fiber : 1, femb_valid : 2, wib_code_1 : 14;
         word_t wib_code_2 : 32;
         word_t timestamp_1 : 32;
         word_t timestamp_2 : 32;
     };
 
-    class Trailer
+    struct Trailer
     {
         word_t crc20 : 20;
         word_t flex_word_12 : 12;
@@ -94,6 +95,13 @@ public:
     /** @brief Get the ith X-channel (ie, collection) ADC in the given femb
      */
     uint16_t get_x(int femb, int i) { return get_adc(128*femb + 40 + 40 + i); }
+
+    /** @brief Get the 64-bit timestamp of the frame
+     */
+    uint64_t timestamp() const {
+        return header.timestamp_1 | ((uint64_t)header.timestamp_2 << 32);
+    }
+
 };
 
 #endif
